@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Happy New Year Eja ❤️</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  min-height:100vh;
+  background:radial-gradient(circle at bottom,#0a1a2f,#000);
+  font-family:'Segoe UI',sans-serif;
+  color:white;
+  overflow:hidden;
+}
+
+/* ===== BACKGROUND ===== */
+.star{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;animation:twinkle 2s infinite}
+@keyframes twinkle{0%,100%{opacity:.3}50%{opacity:1}}
+.heart{position:absolute;color:pink;animation:floatUp 6s linear infinite;opacity:.7}
+@keyframes floatUp{to{transform:translateY(-100vh);opacity:0}}
+
+/* ===== CENTER ===== */
+.center{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  text-align:center;padding:20px;z-index:5
+}
+.center h1{
+  font-size:clamp(1.8rem,5vw,2.6rem);
+  text-shadow:0 0 20px #ff4dd2;
+}
+.center p{margin-top:15px;line-height:1.5}
+.buttons{margin-top:20px;display:flex;gap:12px;flex-wrap:wrap}
+button{
+  padding:12px 25px;border:none;border-radius:25px;
+  background:#ff4dd2;color:#fff;cursor:pointer;
+  box-shadow:0 0 15px rgba(255,77,210,.6)
+}
+
+/* ===== MODAL ===== */
+.modal{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.9);
+  display:none;align-items:center;justify-content:center;
+  z-index:99;padding:15px
+}
+.close{position:absolute;top:15px;right:20px;font-size:32px;cursor:pointer}
+
+/* ===== VIDEO ===== */
+.video-box{
+  width:100%;max-width:360px;
+  aspect-ratio:1/1;
+  border-radius:20px;overflow:hidden;
+  box-shadow:0 0 30px rgba(255,77,210,.6)
+}
+.video-box video{width:100%;height:100%;object-fit:cover}
+
+/* ===== GALERI ===== */
+.gallery-wrapper{
+  width:100%;max-width:520px;height:90vh;
+  overflow-y:auto;padding:15px;
+  border-radius:20px;background:#0a0a15
+}
+.gallery{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(110px,1fr));
+  gap:14px
+}
+
+/* ===== FLIP CARD ===== */
+.flip-card{perspective:1200px}
+.flip-inner{
+  position:relative;
+  width:100%;
+  aspect-ratio:9/16;
+  transform-style:preserve-3d;
+  transition:transform .8s cubic-bezier(.2,.8,.2,1);
+}
+.flip-card:hover .flip-inner,
+.flip-card:active .flip-inner{
+  transform:rotateY(180deg);
+}
+.flip-front,.flip-back{
+  position:absolute;inset:0;
+  backface-visibility:hidden;
+  border-radius:14px;
+  overflow:hidden;
+}
+.flip-front img{
+  width:100%;height:100%;object-fit:cover;
+}
+.flip-back{
+  transform:rotateY(180deg);
+  background:linear-gradient(135deg,#ff4dd2,#7b2cff);
+  display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:15px;
+  font-size:.9em;
+  box-shadow:inset 0 0 30px rgba(0,0,0,.5)
+}
+
+/* ===== FULLSCREEN ===== */
+#preview{
+  position:fixed;inset:0;
+  background:#000;
+  display:none;align-items:center;justify-content:center;
+  z-index:200
+}
+#preview img{max-width:100%;max-height:100%;object-fit:contain}
+.nav{
+  position:absolute;top:50%;
+  font-size:40px;color:#fff;
+  cursor:pointer
+}
+.prev{left:15px}
+.next{right:15px}
+#previewClose{position:absolute;top:15px;right:20px;font-size:32px}
+
+/* ===== FOOTER ===== */
+footer{
+  position:absolute;bottom:15px;width:100%;
+  text-align:center;font-size:.85em;opacity:.7
+}
+</style>
+</head>
+
+<body>
+
+<div class="center">
+<h1>🎆 Selamat Tahun Baru Eja 🎆</h1>
+  <p>Semoga 2026 penuh bahagia 💕<br> Walupun kita belom kenal lama, tapi <br>Terima kasih sudah hadir ✨</p>
+  <div class="buttons">
+    <button onclick="openVideo()">🎬 Lihat Video</button>
+    <button onclick="openFoto()">📸 Lihat Foto</button>
+  </div>
+</div>
+
+<footer>❤️ Dear Yuta To Eja ❤️</footer>
+
+<!-- VIDEO -->
+<div id="videoModal" class="modal">
+  <span class="close" onclick="closeVideo()">×</span>
+  <div class="video-box">
+    <video id="video" controls>
+      <source src="bucin.mp4" type="video/mp4">
+    </video>
+  </div>
+</div>
+
+<!-- FOTO -->
+<div id="fotoModal" class="modal">
+  <span class="close" onclick="closeFoto()">×</span>
+  <div class="gallery-wrapper">
+    <div class="gallery" id="gallery"></div>
+  </div>
+  <audio id="music" src="rasa ini.mp3" loop></audio>
+</div>
+
+<!-- FULLSCREEN -->
+<div id="preview">
+  <span id="previewClose" onclick="closePreview()">×</span>
+  <span class="nav prev" onclick="prevImg()">‹</span>
+  <img id="previewImg">
+  <span class="nav next" onclick="nextImg()">›</span>
+</div>
+
+<script>
+/* ===== BACKGROUND ===== */
+for(let i=0;i<120;i++){
+  let s=document.createElement('div');
+  s.className='star';
+  s.style.top=Math.random()*100+'vh';
+  s.style.left=Math.random()*100+'vw';
+  document.body.appendChild(s);
+}
+setInterval(()=>{
+  let h=document.createElement('div');
+  h.className='heart';h.innerHTML='❤';
+  h.style.left=Math.random()*100+'vw';
+  h.style.bottom='-20px';
+  h.style.fontSize=(Math.random()*20+15)+'px';
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),6000);
+},900);
+
+/* ===== VIDEO ===== */
+const vModal=document.getElementById('videoModal');
+const video=document.getElementById('video');
+function openVideo(){vModal.style.display='flex';video.play()}
+function closeVideo(){video.pause();vModal.style.display='none'}
+
+/* ===== FOTO + TEKS UNIK ===== */
+const texts=[
+"Awal cerita kita ❤️","Senyum yang bikin tenang 😊","Hari yang berkesan ✨",
+"Momen sederhana tapi berarti","Kenangan manis 💕","Tawa yang aku rindukan",
+"Langkah kecil bersama","Hari penuh cerita","Detik yang tak terlupa",
+"Bahagia versi kita","Momen hangat","Cerita di balik foto",
+"Kenangan indah","Saat dunia terasa cukup","Waktu yang spesial",
+"Kenangan yang tumbuh","Bahagia tanpa alasan","Cerita yang tersimpan",
+"Momen kecil berarti","Hari yang aku syukuri",
+"Senyum favoritku","Potongan kebahagiaan",
+"Kita di waktu itu","Cerita yang tak hilang",
+"Kenangan berharga","Detik penuh makna",
+"Momen yang aku simpan","Bahagia sederhana",
+"Cerita hati","Selalu aku ingat ❤️"
+];
+
+const gallery=document.getElementById('gallery');
+for(let i=1;i<=12;i++){
+  gallery.innerHTML+=`
+  <div class="flip-card">
+    <div class="flip-inner">
+      <div class="flip-front">
+        <img src="${i}.jpg">
+      </div>
+      <div class="flip-back">
+        ${texts[i-1]}
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ===== FOTO MODAL ===== */
+const fModal=document.getElementById('fotoModal');
+const music=document.getElementById('music');
+function openFoto(){fModal.style.display='flex';music.play()}
+function closeFoto(){music.pause();fModal.style.display='none'}
+
+/* ===== FULLSCREEN ===== */
+let imgs=[...document.querySelectorAll('.flip-front img')];
+let idx=0;
+imgs.forEach((img,i)=>{
+  img.onclick=()=>{
+    idx=i;
+    previewImg.src=img.src;
+    preview.style.display='flex';
+  }
+});
+const preview=document.getElementById('preview');
+const previewImg=document.getElementById('previewImg');
+function closePreview(){preview.style.display='none'}
+function prevImg(){idx=(idx-1+imgs.length)%imgs.length;previewImg.src=imgs[idx].src}
+function nextImg(){idx=(idx+1)%imgs.length;previewImg.src=imgs[idx].src}
+</script>
+
+</body>
+</html>
